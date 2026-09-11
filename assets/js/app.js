@@ -25,11 +25,12 @@
     clearTimeout(toastT); toastT = setTimeout(function () { toastEl.classList.remove('on'); }, 1500);
   }
   function pad(n) { return (n < 10 ? '0' : '') + n; }
+  /* times are shown truncated to hundredths, never rounded, and exec is
+     always total minus memo in those same units, so the split adds up */
   function fmt(ms) {
     if (ms == null) return '0.00';
-    var s = ms / 1000;
-    return s < 60 ? s.toFixed(2)
-      : Math.floor(s / 60) + ':' + pad(Math.floor(s % 60)) + '.' + pad(Math.round((s % 1) * 100));
+    var cs = Math.floor(ms / 10), m = Math.floor(cs / 6000), sec = Math.floor((cs % 6000) / 100), h = cs % 100;
+    return (m ? m + ':' + pad(sec) : String(sec)) + '.' + pad(h);
   }
   /* two-step confirm, so no OS confirm() dialog ever appears */
   function confirmed(btn, run) {
@@ -210,10 +211,12 @@
       memoMs = Date.now() - t0; TS = 'exec';
       $('#split-memo').textContent = fmt(memoMs); setPhase('execution', 'exec');
     } else if (TS === 'exec') {
-      var total = Date.now() - t0; cancelAnimationFrame(raf); TS = 'idle';
-      clock.textContent = fmt(total); $('#split-exec').textContent = fmt(total - memoMs);
+      cancelAnimationFrame(raf); TS = 'idle';
+      var total = Math.floor((Date.now() - t0) / 10) * 10, memo = Math.floor(memoMs / 10) * 10;
+      clock.textContent = fmt(total);
+      $('#split-memo').textContent = fmt(memo); $('#split-exec').textContent = fmt(total - memo);
       setPhase('ready', '');
-      pending = { ms: total, memo: memoMs, exec: total - memoMs, pen: null,
+      pending = { ms: total, memo: memo, exec: total - memo, pen: null,
                   at: Date.now(), assisted: assisted };
       $('#verdict-ask').removeAttribute('hidden');
     }
@@ -249,11 +252,12 @@
     e.preventDefault(); release();
   });
   var stageEl = $('#page-solve .stage');
+  function touchOnly() { return document.body.classList.contains('touch'); }
   stageEl.addEventListener('pointerdown', function (e) {
-    if (!timerLive() || e.button) return;
+    if (!touchOnly() || !timerLive() || e.button) return;
     e.preventDefault(); press();
   });
-  stageEl.addEventListener('pointerup', function () { if (timerLive()) release(); });
+  stageEl.addEventListener('pointerup', function () { if (touchOnly() && timerLive()) release(); });
   stageEl.addEventListener('pointercancel', function () { if (TS === 'armed') { TS = 'idle'; setPhase('ready', ''); } });
 
   var pending = null;
