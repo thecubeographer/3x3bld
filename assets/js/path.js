@@ -175,12 +175,14 @@
 
   function applyQuiz(a) {
     P = fresh(); P.started = true; P.quiz = a;
+    // teaching steps can be skipped on the strength of an answer; the three
+    // practice gates (2x2, assisted 3x3, full 3x3) can only be earned
     if (a.speffz === 'cold') P.done.letters = true;
     if (a.algs === 'both') { P.done.cornerAlg = true; P.done.edges = true; }
-    if (a.bld === 'two') { P.done.letters = true; P.done.cornerAlg = true; P.done.cornerSetup = true; P.done.twoBld = true; }
-    if (a.bld === 'three') {
-      ['letters', 'cornerAlg', 'cornerSetup', 'twoBld', 'pairs', 'edges', 'assisted'].forEach(function (k) { P.done[k] = true; });
+    if (a.bld === 'two' || a.bld === 'three') {
+      P.done.letters = true; P.done.cornerAlg = true; P.done.cornerSetup = true;
     }
+    if (a.bld === 'three') { P.done.pairs = true; P.done.edges = true; }
     persist(); render();
   }
 
@@ -223,58 +225,57 @@
   }
   function closeCelebration() {
     $('#celebrate').setAttribute('hidden', ''); $('#cel-3d').innerHTML = '';
-    var n = currentStage(); render(); if (n) openLesson(n.id);
+    var n = currentStage(); selected = n ? n.id : selected; render();
   }
 
-  /* ------------------------------------------------------------ the path */
+  /* ---------------------------------------------------- the course screen */
+  var FACE_CYCLE = ['U', 'L', 'F', 'R', 'B', 'D', 'U', 'L'];
+  var selected = null;
+
   function render() {
     var quizOn = !P.started;
     $('#quiz').toggleAttribute('hidden', !quizOn);
-    if (quizOn) { $('#path').setAttribute('hidden', ''); $('#lesson').setAttribute('hidden', ''); renderQuiz(); return; }
-    if (!$('#lesson').hasAttribute('hidden')) return;
-    $('#path').removeAttribute('hidden');
+    $('#course').toggleAttribute('hidden', quizOn);
+    if (quizOn) { renderQuiz(); return; }
 
     var list = ordered(), cur = currentStage();
-    var doneN = list.filter(function (s) { return P.done[s.id]; }).length;
-    $('#path-bar').style.width = Math.round(doneN / list.length * 100) + '%';
-    $('#path-pct').textContent = doneN + ' of ' + list.length;
-    $('#path-sub').textContent = cur ? 'You are on step ' + (list.indexOf(cur) + 1) + ', ' + cur.title.toLowerCase()
-      : 'Every step is done.';
+    if (!selected || !stageById(selected) || P.skip[selected]) selected = cur ? cur.id : list[list.length - 1].id;
 
     $('#stages').innerHTML = list.map(function (s, i) {
-      var done = !!P.done[s.id], active = cur && s.id === cur.id;
-      var state = done ? 'done' : active ? 'active' : 'locked';
-      var prog = '';
-      if (s.need && !done) prog = '<span class="st-prog">' + progress(s.id) + ' / ' + s.need + ' ' + s.unit + '</span>';
-      if (done) prog = '<span class="st-prog ok">done</span>';
-      return '<button class="stage ' + state + '" data-id="' + s.id + '"' + (state === 'locked' ? ' disabled' : '') + '>' +
-        '<span class="st-n">' + (i + 1) + '</span>' +
-        '<span class="st-b"><b>' + s.title + '</b><i>' + s.blurb + '</i></span>' + prog + '</button>';
+      var done = !!P.done[s.id], active = cur && s.id === cur.id, locked = !done && !active;
+      var cls = 'step f' + FACE_CYCLE[i] + (done ? ' done' : '') + (active ? ' active' : '') +
+        (locked ? ' locked' : '') + (s.id === selected ? ' sel' : '');
+      var meter = '';
+      if (s.need && !done) meter = '<i class="meter"><b style="width:' + Math.round(progress(s.id) / s.need * 100) + '%"></b></i>';
+      return '<button class="' + cls + '" data-id="' + s.id + '"' + (locked ? ' disabled' : '') + '>' +
+        '<span class="n">' + (i + 1) + '</span>' +
+        '<span class="t">' + s.title + '</span>' +
+        (done ? '<span class="tick">&#10003;</span>' : '') + meter + '</button>';
     }).join('');
-    $$('#stages .stage').forEach(function (b) {
+    $$('#stages .step').forEach(function (b) {
       b.addEventListener('click', function () { openLesson(b.dataset.id); });
     });
+    openLesson(selected);
   }
 
-  /* ---------------------------------------------------------- the lesson */
   var cube3d = null, lessonId = null, drill = null;
 
   function openLesson(id) {
     var s = stageById(id); if (!s) return;
-    lessonId = id;
-    $('#path').setAttribute('hidden', ''); $('#quiz').setAttribute('hidden', '');
-    $('#lesson').removeAttribute('hidden');
-    $('#lesson-step').textContent = 'Step ' + (ordered().indexOf(s) + 1) + ' of ' + ordered().length +
-      '  ' + s.title;
-    $('#lesson-text').innerHTML = '<h1>' + s.title + '</h1>' + s.teach;
+    selected = id; lessonId = id;
+    $$('#stages .step').forEach(function (b) { b.classList.toggle('sel', b.dataset.id === id); });
+    var idx = ordered().indexOf(s);
+    $('#lesson-text').innerHTML =
+      '<p class="kicker">Step ' + (idx + 1) + '</p><h1>' + s.title + '</h1>' + s.teach;
     if ($('#t-corner-alg')) $('#t-corner-alg').innerHTML = window.tintMoves(Cube.CORNER_ALG);
     if ($('#t-edge-alg')) $('#t-edge-alg').innerHTML = window.tintMoves(Cube.EDGE_ALG);
     if ($('#t-parity-alg')) $('#t-parity-alg').innerHTML = window.tintMoves(Cube.PARITY_ALG);
 
-    $('#lesson-done').toggleAttribute('hidden', !(s.selfMark || s.go));
+    var done = !!P.done[id];
+    $('#lesson-done').toggleAttribute('hidden', !(s.selfMark || s.go) || done);
     $('#lesson-done').textContent = s.selfMark ? s.selfMark : 'Take me there';
-    $('#lesson-score').textContent = s.need ? progress(s.id) + ' / ' + s.need + ' ' + s.unit : '';
-
+    $('#lesson-score').textContent = done ? 'Done' : s.need ? progress(s.id) + ' of ' + s.need + ' ' + s.unit : '';
+    $('#lesson').style.setProperty('--step-c', 'var(--' + FACE_CYCLE[idx] + ')');
     buildCube(s);
   }
 
@@ -282,7 +283,7 @@
     var host = $('#lesson-3d'); host.innerHTML = '';
     var wrap = document.createElement('div'); host.appendChild(wrap);
     var n = s.id === 'twoBld' ? 2 : 3;
-    cube3d = Cube3D.create(wrap, { n: n, size: 300, labels: s.id === 'letters' });
+    cube3d = Cube3D.create(wrap, { n: n, size: 240, labels: s.id === 'letters' });
     var ctl = $('#cube-ctl'); ctl.innerHTML = ''; drill = null;
 
     if (s.demo) {
@@ -379,17 +380,14 @@
     $('#quiz-skip').addEventListener('click', function () {
       P = fresh(); P.started = true; persist(); render();
     });
-    $('#lesson-back').addEventListener('click', function () {
-      $('#lesson').setAttribute('hidden', ''); lessonId = null; render();
-    });
     $('#lesson-done').addEventListener('click', function () {
       var s = stageById(lessonId); if (!s) return;
-      if (s.selfMark) { complete(s.id); $('#lesson').setAttribute('hidden', ''); render(); }
+      if (s.selfMark) { complete(s.id); render(); }
       else if (s.go) { root.BLD.goto(s.go); }
     });
     $('#cel-go').addEventListener('click', closeCelebration);
     $('#path-reset').addEventListener('click', function () {
-      P = fresh(); persist(); render();
+      P = fresh(); selected = null; persist(); render();
     });
     render();
   }

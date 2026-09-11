@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>BLD Trainer</title>
-<link rel="icon" href="assets/favicon.svg?v=3" type="image/svg+xml">
-<link rel="stylesheet" href="assets/css/app.css?v=3">
+<link rel="icon" href="assets/favicon.svg?v=4" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/app.css?v=4">
 </head>
 <body>
 
@@ -29,48 +29,40 @@
 <main class="screen is-on" id="page-learn">
 
   <div class="quiz" id="quiz" hidden>
-    <div class="quiz-in">
-      <video class="quiz-cube" autoplay muted loop playsinline width="200" height="200">
-        <source src="assets/video/cube-loop.webm" type="video/webm">
-        <source src="assets/video/cube-loop.mp4" type="video/mp4">
-      </video>
-      <h1>Where should you start?</h1>
-      <p class="lede">Four questions, then the site puts you on the right step.</p>
-      <div id="quiz-qs"></div>
-      <div class="quiz-foot">
-        <button class="btn big" id="quiz-go" disabled>Build my path</button>
-        <button class="icon-btn" id="quiz-skip">skip, start at the top</button>
+    <div class="quiz-grid">
+      <div class="quiz-form">
+        <h1>Where do<br>you start?</h1>
+        <div id="quiz-qs"></div>
+        <div class="quiz-foot">
+          <button class="btn primary" id="quiz-go" disabled>Build my path</button>
+          <button class="quiet" id="quiz-skip">Skip, start at step one</button>
+        </div>
+      </div>
+      <div class="quiz-hero">
+        <video autoplay muted loop playsinline>
+          <source src="assets/video/cube-loop.webm" type="video/webm">
+          <source src="assets/video/cube-loop.mp4" type="video/mp4">
+        </video>
       </div>
     </div>
   </div>
 
-  <div class="path" id="path" hidden>
-    <div class="path-head">
-      <div>
-        <h1 id="path-title">Your path</h1>
-        <p class="lede" id="path-sub"></p>
-      </div>
-      <div class="path-prog"><div class="bar"><i id="path-bar"></i></div><span id="path-pct"></span></div>
-      <button class="icon-btn" id="path-reset" data-confirm="Start over?">reset progress</button>
-    </div>
-    <div class="stages" id="stages"></div>
-  </div>
-
-  <div class="lesson" id="lesson" hidden>
-    <div class="lesson-bar">
-      <button class="icon-btn" id="lesson-back">&lsaquo; path</button>
-      <span class="lesson-step" id="lesson-step"></span>
-      <span class="grow"></span>
-      <span class="score" id="lesson-score"></span>
-      <button class="btn" id="lesson-done">Mark done</button>
-    </div>
-    <div class="lesson-body">
+  <div class="course" id="course" hidden>
+    <div class="steps" id="stages"></div>
+    <div class="lesson" id="lesson">
       <div class="lesson-text" id="lesson-text"></div>
-      <div class="lesson-cube">
-        <div id="lesson-3d"></div>
-        <div class="cube-ctl" id="cube-ctl"></div>
+      <div class="lesson-side">
+        <div class="lesson-cube">
+          <div id="lesson-3d"></div>
+          <div class="cube-ctl" id="cube-ctl"></div>
+        </div>
+        <div class="lesson-foot">
+          <span class="lesson-score" id="lesson-score"></span>
+          <button class="btn primary" id="lesson-done">Mark done</button>
+        </div>
       </div>
     </div>
+    <div class="course-foot"><button class="quiet" id="path-reset" data-confirm="Start over, lose all progress?">Reset progress</button></div>
   </div>
 </main>
 
@@ -217,10 +209,10 @@
 <div class="toast" id="toast"></div>
 <input type="file" id="file-input" accept="application/json" class="off">
 
-<script src="assets/js/data-letters.js?v=3"></script>
-<script src="assets/js/cube.js?v=3"></script>
-<script src="assets/js/cube3d.js?v=3"></script>
-<script src="assets/js/app.js?v=3"></script>
-<script src="assets/js/path.js?v=3"></script>
+<script src="assets/js/data-letters.js?v=4"></script>
+<script src="assets/js/cube.js?v=4"></script>
+<script src="assets/js/cube3d.js?v=4"></script>
+<script src="assets/js/app.js?v=4"></script>
+<script src="assets/js/path.js?v=4"></script>
 </body>
 </html>
