@@ -169,6 +169,29 @@
   function setPhase(p, c) { phase.textContent = p; clock.className = 'clock' + (c ? ' ' + c : ''); }
   function tick() { clock.textContent = fmt(Date.now() - t0); raf = requestAnimationFrame(tick); }
 
+  /* one state machine, two ways in: the space bar on a desk, a tap on a phone */
+  function press() {
+    if (TS === 'idle') { TS = 'armed'; clock.textContent = '0.00'; setPhase('release to start', 'armed'); }
+    else if (TS === 'memo') {
+      memoMs = Date.now() - t0; TS = 'exec';
+      $('#split-memo').textContent = fmt(memoMs); setPhase('execution', 'exec');
+    } else if (TS === 'exec') {
+      var total = Date.now() - t0; cancelAnimationFrame(raf); TS = 'idle';
+      clock.textContent = fmt(total); $('#split-exec').textContent = fmt(total - memoMs);
+      setPhase('ready', '');
+      pending = { ms: total, memo: memoMs, exec: total - memoMs, pen: null,
+                  at: Date.now(), assisted: assisted };
+      $('#verdict-ask').removeAttribute('hidden');
+    }
+  }
+  function release() {
+    if (TS !== 'armed') return;
+    TS = 'memo'; t0 = Date.now(); memoMs = 0;
+    $('#split-memo').textContent = '0.00'; $('#split-exec').textContent = '0.00';
+    setPhase('memo', 'memo'); tick();
+  }
+  function timerLive() { return onTab('solve') && !sheetOpen() && !pending; }
+
   document.addEventListener('keydown', function (e) {
     var tag = (e.target.tagName || '').toLowerCase();
     if (tag === 'input' || tag === 'textarea') return;
@@ -184,28 +207,19 @@
     if (e.code === 'KeyN' && TS === 'idle') { newScramble(); return; }
     if (e.code !== 'Space' || sheetOpen()) return;
     e.preventDefault(); if (e.repeat) return;
-    if (TS === 'idle') { TS = 'armed'; clock.textContent = '0.00'; setPhase('release', 'armed'); }
-    else if (TS === 'memo') {
-      memoMs = Date.now() - t0; TS = 'exec';
-      $('#split-memo').textContent = fmt(memoMs); setPhase('execution', 'exec');
-    } else if (TS === 'exec') {
-      var total = Date.now() - t0; cancelAnimationFrame(raf); TS = 'idle';
-      clock.textContent = fmt(total); $('#split-exec').textContent = fmt(total - memoMs);
-      setPhase('ready', '');
-      pending = { ms: total, memo: memoMs, exec: total - memoMs, pen: null,
-                  at: Date.now(), assisted: assisted };
-      $('#verdict-ask').removeAttribute('hidden');
-    }
+    press();
   });
   document.addEventListener('keyup', function (e) {
-    if (e.code !== 'Space' || !onTab('solve') || sheetOpen()) return;
-    e.preventDefault();
-    if (TS === 'armed') {
-      TS = 'memo'; t0 = Date.now(); memoMs = 0;
-      $('#split-memo').textContent = '0.00'; $('#split-exec').textContent = '0.00';
-      setPhase('memo', 'memo'); tick();
-    }
+    if (e.code !== 'Space' || !timerLive()) return;
+    e.preventDefault(); release();
   });
+  var stageEl = $('#page-solve .stage');
+  stageEl.addEventListener('pointerdown', function (e) {
+    if (!timerLive() || e.button) return;
+    e.preventDefault(); press();
+  });
+  stageEl.addEventListener('pointerup', function () { if (timerLive()) release(); });
+  stageEl.addEventListener('pointercancel', function () { if (TS === 'armed') { TS = 'idle'; setPhase('ready', ''); } });
 
   var pending = null;
   function settle(ok) {
@@ -557,6 +571,22 @@
     $('#in-corners').value = ''; $('#in-edges').value = '';
     renderStory('c'); renderStory('e'); renderNoteScramble();
   });
+
+  /* on a phone the five tabs need the whole rail, so the puzzle switch moves
+     down beside the scramble */
+  var seg = $('#puzzle-seg'), railEl = $('.rail'), bandEl = $('#page-solve .scramble-band');
+  function placeSeg() {
+    var small = innerWidth <= 600;
+    if (small && seg.parentNode !== bandEl) bandEl.appendChild(seg);
+    if (!small && seg.parentNode !== railEl) railEl.appendChild(seg);
+  }
+  placeSeg(); addEventListener('resize', placeSeg);
+
+  if (window.matchMedia && matchMedia('(hover: none)').matches) {
+    document.body.classList.add('touch');
+    $('#page-solve .keys').innerHTML = 'tap: memo <span>&rsaquo;</span> exec <span>&rsaquo;</span> stop';
+    $('#pair-keys').textContent = 'tap to show';
+  }
 
   /* the course jumps you into a screen already set up for the step */
   window.BLD = {

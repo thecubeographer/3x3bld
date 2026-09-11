@@ -385,3 +385,66 @@ kbd{font-family:var(--mono);font-size:11px;background:#000;color:var(--dim);padd
   .lesson{overflow:visible;flex:0 0 auto}
   .lesson-side{position:static}
 }
+
+/* ----------------------------------------------------------------- phones */
+@supports(height:100dvh){html,body{height:100dvh}}
+body{padding-bottom:env(safe-area-inset-bottom)}
+.rail{padding-left:max(20px,env(safe-area-inset-left));padding-right:max(20px,env(safe-area-inset-right))}
+.tabs{flex:1;min-width:0;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto}
+body.touch kbd{display:none}
+body.touch .btn,body.touch .seg-btn,body.touch .q-opt,body.touch .step{min-height:44px}
+body.touch .btn{padding:11px 16px}
+body.touch .icon-btn{min-height:44px}
+body.touch .tools{gap:8px}
+@media(max-width:600px){
+  .rail{gap:10px;height:50px;flex:0 0 50px}
+  .tab{padding:0 10px;font-size:14px;height:50px}
+  .mark{font-size:13px}
+  .scramble-band{padding:10px 14px;gap:10px}
+  .scramble{font-size:15px;line-height:1.6}
+  .stage{padding:14px}
+  .phase{margin-top:8px}
+  .statline{padding:0 2px}
+  .stat{min-width:0;padding:10px 12px}
+  .stat b{font-size:18px}
+  .solves{height:46px}
+  .tools{flex-wrap:wrap;padding:10px 12px}
+  .tools .btn{flex:1 1 auto;text-align:center}
+  .verdict-ask{flex-wrap:wrap;gap:10px;padding:14px}
+  .verdict-ask span{flex-basis:100%;text-align:center}
+  .verdict-ask .btn{flex:1}
+  .sheet{padding:12px 8px 40px}
+  .sheet-in{padding:44px 16px 24px}
+  .memo-letters{font-size:22px;letter-spacing:.12em}
+  .net{--fw:66px}
+  .sub-band{padding:8px 12px;gap:8px}
+  .in.wide{min-width:0;flex:1 1 100%}
+  .notes-cols>div{padding:12px 12px 24px}
+  .ta{font-size:22px;letter-spacing:.12em;word-spacing:.7em;padding:12px}
+  .srow2{grid-template-columns:28px 64px 1fr;gap:10px;padding:10px 6px 8px}
+  .srow2 input{grid-column:2/4;font-size:14px}
+  .srow2 .pr{font-size:19px} .srow2 .wd{font-size:16px}
+  .par-alg{padding-left:12px}
+  .par-alg code{font-size:13px}
+  .prompt{font-size:clamp(3rem,22vw,6rem)}
+  .prompt.words{font-size:clamp(1.6rem,8vw,2.6rem)}
+  .quiz h1{font-size:clamp(2.4rem,12vw,3.4rem);margin-bottom:22px}
+  .quiz-foot{flex-wrap:wrap;gap:12px}
+  .lesson{padding:20px 16px 32px;gap:20px}
+  .lesson-text{font-size:16px}
+  .lesson-text h1{font-size:2rem}
+  .lesson-cube{padding:12px 10px 18px}
+  #lesson-3d{height:300px}
+  .steps{gap:3px;padding:3px}
+  .step{min-height:78px;padding:10px 10px 12px}
+  .step .n{font-size:22px} .step .t{font-size:12.5px}
+  .cel-in video{width:220px;height:220px}
+  .cel-in h2{font-size:24px}
+}
+@media(max-width:600px){.scramble-band{flex-wrap:wrap}.scramble-band .seg{margin-left:0}}
+@media(max-width:760px){
+  .notes-cols{display:block;overflow:auto}
+  .notes-cols>div{overflow:visible}
+}
