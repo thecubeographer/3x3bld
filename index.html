@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BLD Trainer</title>
+<link rel="icon" href="assets/favicon.svg?v=3" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/app.css?v=3">
+</head>
+<body>
+
+<div class="rail">
+  <span class="mark">BLD</span>
+  <nav class="tabs" id="tabs">
+    <button class="tab is-on" data-tab="learn">Learn</button>
+    <button class="tab" data-tab="solve">Solve</button>
+    <button class="tab" data-tab="letters">Letters</button>
+    <button class="tab" data-tab="pairs">Pairs</button>
+    <button class="tab" data-tab="notepad">Notes</button>
+  </nav>
+  <div class="seg tiny" id="puzzle-seg">
+    <button class="seg-btn is-on" data-puzzle="333">3x3</button>
+    <button class="seg-btn" data-puzzle="222">2x2</button>
+  </div>
+</div>
+
+
+<!-- =============================================================== LEARN -->
+<main class="screen is-on" id="page-learn">
+
+  <div class="quiz" id="quiz" hidden>
+    <div class="quiz-in">
+      <h1>Where should you start?</h1>
+      <p class="lede">Four questions, then the site puts you on the right step.</p>
+      <div id="quiz-qs"></div>
+      <div class="quiz-foot">
+        <button class="btn big" id="quiz-go" disabled>Build my path</button>
+        <button class="icon-btn" id="quiz-skip">skip, start at the top</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="path" id="path" hidden>
+    <div class="path-head">
+      <div>
+        <h1 id="path-title">Your path</h1>
+        <p class="lede" id="path-sub"></p>
+      </div>
+      <div class="path-prog"><div class="bar"><i id="path-bar"></i></div><span id="path-pct"></span></div>
+      <button class="icon-btn" id="path-reset" data-confirm="Start over?">reset progress</button>
+    </div>
+    <div class="stages" id="stages"></div>
+  </div>
+
+  <div class="lesson" id="lesson" hidden>
+    <div class="lesson-bar">
+      <button class="icon-btn" id="lesson-back">&lsaquo; path</button>
+      <span class="lesson-step" id="lesson-step"></span>
+      <span class="grow"></span>
+      <span class="score" id="lesson-score"></span>
+      <button class="btn" id="lesson-done">Mark done</button>
+    </div>
+    <div class="lesson-body">
+      <div class="lesson-text" id="lesson-text"></div>
+      <div class="lesson-cube">
+        <div id="lesson-3d"></div>
+        <div class="cube-ctl" id="cube-ctl"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- =============================================================== SOLVE -->
+<main class="screen" id="page-solve">
+  <div class="scramble-band">
+    <div class="scramble" id="scramble"></div>
+    <button class="icon-btn" id="new-scramble" aria-label="new scramble"><kbd>N</kbd> new</button>
+  </div>
+
+  <div class="stage">
+    <div class="clock" id="clock">0.00</div>
+    <div class="phase" id="phase">ready</div>
+    <div class="splits"><b id="split-memo">0.00</b><i>memo</i><b id="split-exec">0.00</b><i>exec</i></div>
+    <div class="keys">
+      <kbd>space</kbd> memo <span>&rsaquo;</span> exec <span>&rsaquo;</span> stop
+      <em></em>
+      <kbd>S</kbd> solution
+    </div>
+  </div>
+
+  <div class="verdict-ask" id="verdict-ask" hidden>
+    <span>Did it come out solved?</span>
+    <button class="btn ok-btn" data-v="ok">Solved <kbd>Y</kbd></button>
+    <button class="btn bad-btn" data-v="dnf">DNF <kbd>N</kbd></button>
+  </div>
+
+  <div class="statline" id="stats"></div>
+
+  <div class="lower">
+    <div class="solves" id="solve-list"></div>
+    <div class="tools">
+      <button class="assist-tag" id="assist-tag"></button>
+      <button class="btn" id="toggle-solution"><kbd>S</kbd> Solution</button>
+      <button class="btn" id="pen-plus2">+2</button>
+      <button class="btn" id="pen-dnf">DNF</button>
+      <button class="btn" id="del-last">Delete</button>
+      <button class="btn" id="clear-session" data-confirm="Clear all?">Clear</button>
+    </div>
+  </div>
+</main>
+
+<!-- =========================================================== SOLUTION -->
+<div class="sheet" id="solution" hidden>
+  <div class="sheet-in">
+    <button class="sheet-x" id="close-solution" aria-label="close">&times;</button>
+    <div class="sheet-cols">
+      <div>
+        <div class="memo" id="memo-corners"></div>
+        <div class="memo" id="memo-edges"></div>
+        <div class="checkrow">
+          <input class="in" id="check-c" placeholder="corner memo" spellcheck="false" autocomplete="off">
+          <input class="in" id="check-e" placeholder="edge memo" spellcheck="false" autocomplete="off">
+          <span class="verdict" id="check-out"></span>
+        </div>
+      </div>
+      <div>
+        <div class="net" id="net"></div>
+        <ol class="algs" id="alg-list"></ol>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================= LETTERS -->
+<main class="screen" id="page-letters">
+  <div class="sub-band">
+    <input class="in wide" id="letter-search" placeholder="find a pair or a word" autocomplete="off">
+    <span class="grow"></span>
+    <button class="btn" id="export-letters">Export</button>
+    <button class="btn" id="import-letters">Import</button>
+    <button class="btn" id="reset-letters" data-confirm="Reset all?">Reset</button>
+  </div>
+  <div class="grid-wrap"><table class="pair-grid" id="pair-grid"></table></div>
+</main>
+
+<!-- =============================================================== PAIRS -->
+<main class="screen" id="page-pairs">
+  <div class="sub-band">
+    <div class="seg" id="pair-mode">
+      <button class="seg-btn is-on" data-mode="p2w">Pair &rsaquo; image</button>
+      <button class="seg-btn" data-mode="w2p">Image &rsaquo; pair</button>
+    </div>
+    <div class="seg" id="pair-scope">
+      <button class="seg-btn is-on" data-scope="all">All</button>
+      <button class="seg-btn" data-scope="weak">Weak</button>
+    </div>
+    <span class="grow"></span>
+    <span class="score" id="pair-stats"></span>
+    <button class="btn" id="clear-pair-stats" data-confirm="Wipe history?">Wipe</button>
+  </div>
+  <div class="stage drill">
+    <div class="prompt" id="pair-prompt">&mdash;</div>
+    <div class="answer" id="pair-answer" hidden></div>
+    <div class="grade" id="pair-grade" hidden>
+      <button class="btn" data-g="1">Got it <kbd>1</kbd></button>
+      <button class="btn" data-g="0">Missed <kbd>2</kbd></button>
+    </div>
+    <div class="keys" id="pair-keys"><kbd>space</kbd> or click to show</div>
+  </div>
+  <div class="chips" id="weak-list"></div>
+</main>
+
+<!-- ============================================================== NOTES -->
+<main class="screen" id="page-notepad">
+  <div class="sub-band">
+    <button class="btn" id="pull-memo">Pull from scramble</button>
+    <button class="btn" id="copy-notes">Copy</button>
+    <div class="seg" id="notes-mode">
+      <button class="seg-btn is-on" data-nmode="all">All</button>
+      <button class="seg-btn" data-nmode="words">Words only</button>
+      <button class="seg-btn" data-nmode="blind">Blind</button>
+    </div>
+    <span class="grow"></span>
+    <button class="btn" id="clear-notes" data-confirm="Clear notes?">Clear</button>
+  </div>
+  <div class="scramble-band" id="note-scramble" hidden>
+    <span class="scr-tag" id="note-scramble-tag"></span>
+    <div class="scramble" id="note-scramble-text"></div>
+  </div>
+  <div class="notes-cols">
+    <div>
+      <div class="note-head"><span class="note-t">corners</span><span class="note-n" id="count-c"></span></div>
+      <textarea class="ta" id="in-corners" placeholder="corner targets" spellcheck="false"></textarea>
+      <div class="story" id="story-corners"></div>
+    </div>
+    <div>
+      <div class="note-head"><span class="note-t">edges</span><span class="note-n" id="count-e"></span></div>
+      <textarea class="ta" id="in-edges" placeholder="edge targets" spellcheck="false"></textarea>
+      <div class="story" id="story-edges"></div>
+    </div>
+  </div>
+</main>
+
+<div class="celebrate" id="celebrate" hidden>
+  <div class="cel-in">
+    <div id="cel-3d"></div>
+    <h2 id="cel-title"></h2>
+    <p id="cel-sub"></p>
+    <button class="btn big" id="cel-go">Next step</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<input type="file" id="file-input" accept="application/json" class="off">
+
+<script src="assets/js/data-letters.js?v=3"></script>
+<script src="assets/js/cube.js?v=3"></script>
+<script src="assets/js/cube3d.js?v=3"></script>
+<script src="assets/js/app.js?v=3"></script>
+<script src="assets/js/path.js?v=3"></script>
+</body>
+</html>
