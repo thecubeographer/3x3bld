@@ -461,3 +461,4 @@ kbd{font-family:var(--mono);font-size:10px;background:#000;color:var(--dim);
 .cel-in video{display:block;margin:0 auto 10px}
 .cel-in h2{font-family:var(--mono);font-size:26px;font-weight:700;margin:0 0 6px}
 .cel-in p{color:var(--dim);margin:0 0 20px}
+.quiz-cube{display:block;margin:0 0 4px -18px}
