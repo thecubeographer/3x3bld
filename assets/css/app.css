@@ -465,11 +465,41 @@ body.touch .tools{gap:8px}
   cursor:pointer;padding:8px 10px}
 .tip-btn:hover{color:var(--fg)}
 .rail .tip-btn + .seg{margin-left:0}
-.tips-in{max-width:760px;font-size:15.5px;line-height:1.6}
-.tips-in h2{font-size:28px;font-weight:800;margin:0 0 6px}
-.tips-lede{color:var(--dim);margin:0 0 24px}
-.tips-in section{padding:16px 0;border-top:1px solid var(--hair)}
-.tips-in h3{font-size:17px;font-weight:700;margin:0 0 8px}
-.tips-in p{margin:0 0 10px;color:var(--dim)}
-.tips-in p b{color:var(--fg)} .tips-in p i{color:var(--fg);font-style:normal;font-weight:600}
+.tips-in{max-width:980px}
+.tips-in h2{font-size:28px;font-weight:800;margin:0 0 20px}
+.tcard{display:grid;grid-template-columns:400px minmax(0,1fr);gap:26px;align-items:start;
+  padding:22px 0;border-top:1px solid var(--hair)}
+.tcard h3{font-size:18px;font-weight:700;margin:4px 0 12px}
+.tcard ul{margin:0;padding-left:20px;font-size:15px;line-height:1.5;color:var(--dim)}
+.tcard li{margin:0 0 8px} .tcard li b{color:var(--fg)}
+.tcard-demo{display:grid;grid-template-columns:190px minmax(0,1fr);gap:14px;align-items:start;
+  background:var(--stage);border-radius:var(--r);padding:14px}
+.tcard-demo.static{grid-template-columns:1fr;justify-items:center;text-align:center}
+.tcard-cap{font-size:13px;color:var(--dim);margin:6px 0 0}
+.tip-letters{font-family:var(--mono);font-size:20px;font-weight:700;letter-spacing:.14em;
+  line-height:1.4;margin-bottom:10px}
+.tip-letters .cyc{display:inline-block;margin:0 10px 8px 0}
+.tip-letters .cyc.bi{position:relative;padding:8px 10px 6px;background:var(--band);
+  border-radius:var(--r);margin-top:14px}
+.tip-letters .cyc.bi i{position:absolute;top:-9px;left:8px;font-family:var(--sans);font-style:normal;
+  font-size:11px;font-weight:700;letter-spacing:0;background:var(--D);color:var(--ink);
+  padding:1px 7px;border-radius:3px}
+.tip-letters .cyc.tw i{background:var(--R);color:#fff}
+.tip-letters .close{text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:6px;
+  text-decoration-color:var(--D)}
+.tip-letters .did{opacity:.35}
+.tip-letters .now{outline:2px solid var(--fg);outline-offset:3px;border-radius:2px}
+.tip-call{font-size:14px;color:var(--dim);min-height:44px;line-height:1.45;margin-bottom:12px}
+.tip-call b{color:var(--fg)}
+.tip-ctl{display:flex;gap:8px}
+.count-ex{display:flex;justify-content:space-between;gap:16px;width:100%;font-size:15px;
+  padding:10px 12px;background:var(--band);border-radius:var(--r);margin-bottom:6px;text-align:left}
+.count-ex b{color:var(--F)} .count-ex b.odd{color:var(--R)}
+.tcard-demo.count code{display:block;width:100%;font-size:13px;margin-top:8px;text-align:left;
+  line-height:1.6}
+.tips-foot{font-size:14px;color:var(--dim);margin:20px 0 0;padding-top:18px;
+  border-top:1px solid var(--hair)}
+.tips-foot b{color:var(--fg)}
+@media(max-width:860px){.tcard{grid-template-columns:1fr}.tcard-demo{grid-template-columns:1fr;
+  justify-items:center}.tip-ex{width:100%}}
 @media(max-width:600px){.tip-btn{padding:8px 6px;font-size:13px}.tips-in{font-size:15px}}

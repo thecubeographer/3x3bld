@@ -182,6 +182,7 @@
   function toggleTips(force) {
     var open = force == null ? !tipsOpen() : force;
     $('#tips').toggleAttribute('hidden', !open);
+    if (open && window.Tips) Tips.build();
   }
   $('#open-tips').addEventListener('click', function () { toggleTips(); });
   $('#close-tips').addEventListener('click', function () { toggleTips(false); });
