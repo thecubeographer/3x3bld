@@ -518,3 +518,4 @@ body.touch .tools{gap:8px}
 .count-row.total b{color:var(--ink)}
 .tip-letters.small{font-size:16px;margin-top:12px}
 @media(max-width:860px){.gloss{grid-template-columns:1fr}}
+.net.two .face{grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(2,1fr)}

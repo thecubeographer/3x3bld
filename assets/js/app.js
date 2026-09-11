@@ -61,11 +61,13 @@
   function onTab(id) { return $('#page-' + id).classList.contains('is-on'); }
 
   /* ------------------------------------------------------------------- net */
-  function drawColorNet(host, colors) {
-    host.className = 'net' + (host.dataset.size ? ' ' + host.dataset.size : '');
+  /* the flat net; on a 2x2 only the four corner stickers of each face exist */
+  function drawColorNet(host, colors, n) {
+    host.className = 'net' + (n === 2 ? ' two' : '') + (host.dataset.size ? ' ' + host.dataset.size : '');
     host.innerHTML = FACES.map(function (f) {
+      var cells = n === 2 ? [0, 2, 6, 8].map(function (i) { return colors[f][i]; }) : colors[f];
       return '<div class="face ' + f + '">' +
-        colors[f].map(function (c) { return '<div class="cell c-' + c + '"></div>'; }).join('') + '</div>';
+        cells.map(function (c) { return '<div class="cell c-' + c + '"></div>'; }).join('') + '</div>';
     }).join('');
   }
   /* ----------------------------------------------------------------- solve */
@@ -154,7 +156,7 @@
         return '<li><b class="f-' + faceOf(a.target) + '">' + a.target + '</b> ' +
           splitAlg(a.setup, Cube.EDGE_ALG) + '</li>';
       }).join('');
-    drawColorNet($('#net'), Cube.netColors(analysis.state));
+    drawColorNet($('#net'), Cube.netColors(analysis.state), puzzle === '222' ? 2 : 3);
     $('#check-c').value = ''; $('#check-e').value = ''; $('#check-out').textContent = '';
   }
   /* click a pair chip to hide its image and test yourself */
