@@ -1,8 +1,8 @@
 /* tips.js
-   The Tips sheet: five cards, one rule each, with a live 2x2 example you step
-   through one shot at a time. The examples are found at open time by scanning
-   random scrambles for the situation each card is about, so they are always
-   real solves the site could verify. */
+   The Tips sheet. Plain words, one rule per card, and live 2x2 examples you
+   step through one shot at a time with everything greyed out except the
+   pieces that matter. Examples are found at open time by scanning random
+   scrambles for the exact situation each card is about. */
 (function () {
   'use strict';
   var $ = function (s, r) { return (r || document).querySelector(s); };
@@ -14,10 +14,26 @@
       return L.indexOf(c) < 0 ? c : '<span class="f-' + faceOf(c) + '">' + c + '</span>';
     }).join('');
   }
+  function pieceIdx(letter) {              // every sticker index on that corner
+    return Cube.cPiece[letter].map(function (l) { return Cube.cornerOf[l]; });
+  }
+  var BUFFER = pieceIdx('A');
 
-  /* find a 2x2 scramble that shows exactly the situation a card is about */
+  /* wrong corners, not counting the buffer: pieces, not stickers */
+  function wrongPieces(state) {
+    var seen = {}, n = 0;
+    L.split('').forEach(function (l) {
+      var key = Cube.cPiece[l][0];
+      if (seen[key] || Cube.cPiece['A'].indexOf(l) >= 0) return;
+      seen[key] = true;
+      var ok = Cube.cPiece[l].every(function (x) { return state[Cube.cornerOf[x]] === Cube.cornerOf[x]; });
+      if (!ok) n++;
+    });
+    return n;
+  }
+
   function findExample(test) {
-    for (var i = 0; i < 4000; i++) {
+    for (var i = 0; i < 5000; i++) {
       var a = Cube.analyse2x2(Cube.scramble2(11));
       if (test(a)) return a;
     }
@@ -32,7 +48,8 @@
     },
     twist: function (a) {
       var tw = a.cornerCycles.filter(function (c) { return c.twist; });
-      return tw.length === 1 && a.corners.length <= 6 && !a.cornerCycles[0].breakIn;
+      return tw.length === 1 && a.cornerCycles.length === 2 && a.corners.length <= 6 &&
+        !a.cornerCycles[0].breakIn;
     }
   };
 
@@ -43,89 +60,109 @@
         return '<span class="' + (last ? 'close ' : '') + 'f-' + faceOf(Lt) + '">' + Lt + '</span>';
       }).join(' ');
       if (!c.breakIn) return '<span class="cyc">' + inner + '</span>';
-      return '<span class="cyc bi' + (c.twist ? ' tw' : '') + '"><i>' + (c.twist ? 'twist' : 'break in') +
+      return '<span class="cyc bi' + (c.twist ? ' tw' : '') + '"><i>' + (c.twist ? 'twist' : 'break-in') +
         '</i>' + inner + '</span>';
     }).join('');
   }
 
-  /* a stepper: one shot per click, with the target lit and a one-line callout */
-  function stepper(host, a) {
+  /* one shot per click: the buffer piece and the target piece stay in colour,
+     everything else goes grey */
+  function stepper(host, a, mode) {
     host.innerHTML =
       '<div class="tip-cube"></div>' +
       '<div class="tip-ex">' +
         '<div class="tip-letters">' + bracketHTML(a) + '</div>' +
-        '<div class="tip-call" data-k="0"></div>' +
+        '<div class="tip-call"></div>' +
         '<div class="tip-ctl"><button class="btn" data-act="reset">Start over</button>' +
         '<button class="btn primary" data-act="next">Next shot</button></div>' +
       '</div>';
     var cube = Cube3D.create($('.tip-cube', host), { n: 2, size: 190, tilt: [-24, -38] });
-    var start = a.state, k = 0, busy = false;
-    var call = $('.tip-call', host);
+    var k = 0, busy = false, call = $('.tip-call', host);
     function cycleOf(i) {
       for (var c = 0; c < a.cornerCycles.length; c++) {
-        var cy = a.cornerCycles[c];
-        if (i >= cy.from && i <= cy.to) return cy;
+        var cy = a.cornerCycles[c]; if (i >= cy.from && i <= cy.to) return cy;
       }
     }
-    function light(i) {
+    function show(i) {
       cube.clearLights();
-      cube.light([Cube.cornerOf.A], true);
-      if (i < a.corners.length) cube.light([Cube.cornerOf[a.corners[i]]], true);
+      var keep = BUFFER.slice();
+      if (i < a.corners.length) {
+        keep = keep.concat(pieceIdx(a.corners[i]));
+        cube.light([Cube.cornerOf.A, Cube.cornerOf[a.corners[i]]], true);
+      }
+      cube.focus(keep);
     }
     function say(i) {
       if (i >= a.corners.length) {
-        call.innerHTML = '<b>Solved.</b> ' + a.corners.length + ' letters, ' + a.corners.length + ' algorithms.';
-        return;
+        call.innerHTML = '<b>Solved.</b> ' + a.corners.length + ' letters, ' + a.corners.length +
+          ' algorithms.'; return;
       }
-      var t = a.corners[i], cy = cycleOf(i), n = i + 1;
-      var head = 'Shot ' + n + ' of ' + a.corners.length + ': ';
-      if (cy.breakIn && i === cy.from && cy.twist) {
-        call.innerHTML = head + '<b>twisted corner.</b> Right slot, wrong turn. Shoot ' + tint(t) +
-          ', then another sticker of the same piece.';
+      var t = a.corners[i], cy = cycleOf(i), head = 'Shot ' + (i + 1) + ' of ' + a.corners.length + ': ';
+      if (cy.twist && i === cy.from) {
+        call.innerHTML = head + 'this corner is in the right spot but turned. Shoot ' + tint(t) + '.';
+      } else if (cy.twist) {
+        call.innerHTML = head + '<b>second shot on the same piece</b>, at ' + tint(t) + '. Now it sits right.';
       } else if (cy.breakIn && i === cy.from) {
-        call.innerHTML = head + '<b>buffer is home, pieces still wrong.</b> Break in at ' + tint(t) + '.';
+        call.innerHTML = head + '<b>buffer piece is home but this piece is still wrong.</b> Shoot it at ' +
+          tint(t) + '. That is a break-in.';
       } else if (cy.breakIn && i === cy.to) {
-        call.innerHTML = head + '<b>the extra shot.</b> Back to the slot you broke into, as ' + tint(t) +
-          '. This is the one that gets missed.';
+        call.innerHTML = head + '<b>the extra shot.</b> Back at the piece you broke in on, at ' + tint(t) +
+          '. Miss this and that piece stays wrong.';
       } else {
-        call.innerHTML = head + 'buffer says ' + tint(t) + ', shoot ' + tint(t) + '.';
+        call.innerHTML = head + 'buffer shows ' + tint(t) + '. Shoot ' + tint(t) + '.';
       }
     }
-    function reset() {
-      k = 0; cube.setState(start); light(0); say(0);
-      $$('.tip-letters span span, .tip-letters .cyc > span', host).forEach(function (e) { e.classList.remove('did'); });
-      markLetters();
+    function mark() {
+      $$('.tip-letters .cyc > span', host).forEach(function (e, i) {
+        e.classList.toggle('did', i < k); e.classList.toggle('now', i === k);
+      });
     }
-    function markLetters() {
-      var spans = $$('.tip-letters .cyc > span:not(.close), .tip-letters .cyc > span.close', host);
-      spans.forEach(function (e, i) { e.classList.toggle('did', i < k); e.classList.toggle('now', i === k); });
-    }
+    function reset() { k = 0; cube.setState(a.state); show(0); say(0); mark(); }
     function next() {
       if (busy || k >= a.corners.length) return;
       busy = true;
-      var t = a.corners[k];
-      cube.play(Cube.cornerFull[t], 200).then(function () {
-        k++; busy = false; light(k); say(k); markLetters();
+      cube.play(Cube.cornerFull[a.corners[k]], 200).then(function () {
+        k++; busy = false; show(k); say(k); mark();
       });
     }
     $('[data-act="next"]', host).addEventListener('click', next);
     $('[data-act="reset"]', host).addEventListener('click', reset);
     reset();
+    return a;
+  }
+
+  /* the count rule, worked on the break-in example: wrong pieces + break-ins */
+  function countCard(host, a) {
+    var W = wrongPieces(a.state);
+    var B = a.cornerCycles.filter(function (c) { return c.breakIn; }).length;
+    host.innerHTML =
+      '<div class="tip-cube"></div>' +
+      '<div class="tip-ex">' +
+        '<div class="count-row"><span>wrong pieces (coloured)</span><b>' + W + '</b></div>' +
+        '<div class="count-row"><span>break-ins</span><b>+ ' + B + '</b></div>' +
+        '<div class="count-row total"><span>letters you must have</span><b>' + (W + B) + '</b></div>' +
+        '<div class="tip-letters small">' + bracketHTML(a) + '</div>' +
+      '</div>';
+    var cube = Cube3D.create($('.tip-cube', host), { n: 2, size: 190, tilt: [-24, -38] });
+    cube.setState(a.state);
+    var keep = [];
+    L.split('').forEach(function (l) {
+      if (Cube.cPiece['A'].indexOf(l) >= 0) return;
+      var solved = Cube.cPiece[l].every(function (x) { return a.state[Cube.cornerOf[x]] === Cube.cornerOf[x]; });
+      if (!solved) keep.push(Cube.cornerOf[l]);
+    });
+    cube.focus(keep);
   }
 
   var built = false;
   function build() {
     if (built) return; built = true;
     var bi = findExample(EX.breakin), tw = findExample(EX.twist);
-    if (bi) stepper($('#tip-breakin'), bi);
+    if (bi) { stepper($('#tip-breakin'), bi); countCard($('#tip-count'), bi); }
     if (tw) stepper($('#tip-twist'), tw);
-
-    var stop = Cube3D.create($('#tip-stop'), { n: 2, size: 190, tilt: [-24, -38] });
-    stop.light([Cube.cornerOf.A, Cube.cornerOf.E, Cube.cornerOf.R], true);
     var two = Cube3D.create($('#tip-two'), { n: 2, size: 190, tilt: [28, 40] });
-    two.light([Cube.cornerOf.H, Cube.cornerOf.S, Cube.cornerOf.X], true);
+    two.focus(pieceIdx('H'));
     $('#tip-parity-alg').innerHTML = window.tintMoves(Cube.PARITY_ALG);
   }
-
   window.Tips = { build: build };
 })();

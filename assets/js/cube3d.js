@@ -85,7 +85,8 @@
     function paint() {
       for (var i = 0; i < stickerEl.length; i++) {
         if (!stickerEl[i]) continue;
-        stickerEl[i].className = 'c3d-st s-' + Cube.stickerFace(state, i);
+        var keepCls = stickerEl[i].className.replace(/\bs-\w\b/g, '').replace(/\bc3d-st\b/, '').trim();
+        stickerEl[i].className = 'c3d-st s-' + Cube.stickerFace(state, i) + (keepCls ? ' ' + keepCls : '');
       }
     }
     paint();
@@ -100,6 +101,17 @@
     }
     function clearLights() {
       stickerEl.forEach(function (e) { if (e) e.classList.remove('lit'); });
+      return api;
+    }
+    /* grey out every sticker except the ones to look at */
+    function focus(indices) {
+      var keep = {};
+      (indices || []).forEach(function (i) { keep[i] = true; });
+      stickerEl.forEach(function (e, i) { if (e) e.classList.toggle('dim', !keep[i]); });
+      return api;
+    }
+    function unfocus() {
+      stickerEl.forEach(function (e) { if (e) e.classList.remove('dim'); });
       return api;
     }
 
@@ -173,6 +185,7 @@
 
     var api = {
       el: host, setState: setState, play: play, light: light, clearLights: clearLights,
+      focus: focus, unfocus: unfocus,
       spin: spin, isBusy: function () { return busy; },
       state: function () { return state.slice(); },
       setTilt: function (x, y) { tilt = [x, y]; applyTilt(); return api; },

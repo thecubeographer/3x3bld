@@ -503,3 +503,18 @@ body.touch .tools{gap:8px}
 @media(max-width:860px){.tcard{grid-template-columns:1fr}.tcard-demo{grid-template-columns:1fr;
   justify-items:center}.tip-ex{width:100%}}
 @media(max-width:600px){.tip-btn{padding:8px 6px;font-size:13px}.tips-in{font-size:15px}}
+
+/* ------------------------------------------------- tips: glossary + focus */
+.c3d-st.dim{background:#3b4047!important}
+.c3d-st.dim b{color:rgba(8,9,10,.35)}
+.gloss{display:grid;grid-template-columns:1fr 1fr;gap:10px 24px;font-size:14px;line-height:1.45;
+  color:var(--dim);margin:0 0 8px;padding:0 0 18px}
+.gloss div b:first-child{display:block;color:var(--fg);font-size:15px;margin-bottom:2px}
+.gloss div b{color:var(--fg)}
+.count-row{display:flex;justify-content:space-between;align-items:baseline;gap:14px;font-size:15px;
+  padding:8px 12px;background:var(--band);border-radius:var(--r);margin-bottom:5px}
+.count-row b{font-family:var(--mono);font-size:20px}
+.count-row.total{background:var(--D);color:var(--ink)}
+.count-row.total b{color:var(--ink)}
+.tip-letters.small{font-size:16px;margin-top:12px}
+@media(max-width:860px){.gloss{grid-template-columns:1fr}}

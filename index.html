@@ -10,8 +10,8 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <title>BLD Trainer</title>
-<link rel="icon" href="assets/favicon.svg?v=5" type="image/svg+xml">
-<link rel="stylesheet" href="assets/css/app.css?v=5">
+<link rel="icon" href="assets/favicon.svg?v=6" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/app.css?v=6">
 </head>
 <body>
 
@@ -211,16 +211,45 @@
     <button class="sheet-x" id="close-tips" aria-label="close">&times;</button>
     <h2>Why a solve ends one piece wrong</h2>
 
+    <div class="gloss">
+      <div><b>Letter</b> a spot on the cube. Every sticker has one. A letter is a place, not a piece.</div>
+      <div><b>Buffer</b> the one spot you never aim at. For corners it is <b class="f-U">A</b>. You read
+        whatever sticker is sitting there.</div>
+      <div><b>Shot</b> one algorithm. It swaps the piece in the buffer with the piece at the letter you
+        read. One letter, one shot.</div>
+      <div><b>Chain</b> read the buffer, shoot, read the buffer, shoot, until the buffer's own piece comes
+        back home.</div>
+      <div><b>Break-in</b> the buffer piece is home but other pieces are still wrong. You shoot at any
+        wrong piece to start a new chain. That chain ends by shooting back at that same piece.</div>
+      <div><b>Twist</b> a piece in the right spot but turned. It is a chain of its own: two shots on the
+        same piece.</div>
+    </div>
+
     <div class="tcard">
       <div class="tcard-demo" id="tip-breakin"></div>
       <div class="tcard-text">
-        <h3>Break-in: one extra shot, at the end</h3>
+        <h3>A break-in costs one extra shot, at the end</h3>
         <ul>
-          <li>Buffer home but pieces still wrong: shoot any wrong piece. That is the break-in.</li>
-          <li>Keep reading the buffer as normal.</li>
-          <li>The chain ends by shooting <b>back into the slot you broke into</b>. Underlined above.</li>
-          <li>Read which sticker of that slot the buffer names. It is not always the same letter.</li>
-          <li>3 wrong pieces = <b>4 letters</b>. Count them.</li>
+          <li>Grey pieces are already fine. Only the coloured ones matter.</li>
+          <li>Buffer home, pieces still wrong: shoot any wrong piece. That starts a new chain.</li>
+          <li>Keep reading the buffer like normal.</li>
+          <li>The chain ends by shooting back at the piece you started it on. Underlined above.</li>
+          <li>Which letter of that piece? Whatever the buffer shows. Read it, do not guess.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tcard">
+      <div class="tcard-demo" id="tip-count"></div>
+      <div class="tcard-text">
+        <h3>How to know if you need the extra shot</h3>
+        <ul>
+          <li>Count the wrong corners. Do not count the buffer.</li>
+          <li>Add one for every break-in. A twist counts as a break-in.</li>
+          <li>That total is how many letters you must have. If your memo is shorter, a break-in is
+            missing its last shot.</li>
+          <li>Faster check: every chain you started with a break-in must <b>end on the piece you
+            started it on</b>. If it does not, you are not done.</li>
         </ul>
       </div>
     </div>
@@ -228,64 +257,45 @@
     <div class="tcard">
       <div class="tcard-demo" id="tip-twist"></div>
       <div class="tcard-text">
-        <h3>Twist: right slot, wrong turn, two shots</h3>
+        <h3>A twist is two shots on one piece</h3>
         <ul>
-          <li>Break in on one sticker of the twisted corner.</li>
-          <li>The next target is <b>another sticker of the same piece</b>.</li>
-          <li>Two letters, two algorithms, one corner. The sheet labels it <b>twist</b>.</li>
-          <li>Same rule flips an edge that is in place but backwards.</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="tcard">
-      <div class="tcard-demo static"><div id="tip-stop"></div>
-        <p class="tcard-cap">The buffer corner. Its three stickers are <b class="f-U">A</b>,
-          <b class="f-L">E</b> and <b class="f-B">R</b>.</p></div>
-      <div class="tcard-text">
-        <h3>When you are actually done</h3>
-        <ul>
-          <li><b class="f-U">A</b> sitting in the buffer slot: this cycle is finished.</li>
-          <li><b class="f-L">E</b> or <b class="f-B">R</b> there: buffer is home but twisted. Not finished.</li>
-          <li>Either way, look around the cube. Anything wrong means break in.</li>
-          <li>Done means: A in the buffer <b>and</b> nothing else wrong.</li>
+          <li>The coloured corner is in the right spot but turned.</li>
+          <li>Shoot one of its letters. Then the buffer shows another letter of that same piece. Shoot that
+            too.</li>
+          <li>Two letters, two algorithms, one corner. The Solution sheet labels it <b>twist</b>.</li>
         </ul>
       </div>
     </div>
 
     <div class="tcard">
       <div class="tcard-demo static count">
-        <div class="count-ex"><span>7 corner letters</span><b class="odd">odd, parity</b></div>
-        <div class="count-ex"><span>8 corner letters</span><b>even, no parity</b></div>
+        <div class="count-ex"><span>7 corner letters</span><b class="odd">odd, do parity</b></div>
+        <div class="count-ex"><span>8 corner letters</span><b>even, skip it</b></div>
         <code id="tip-parity-alg"></code>
       </div>
       <div class="tcard-text">
-        <h3>Parity: one count decides it</h3>
+        <h3>Parity, 3x3 only</h3>
         <ul>
-          <li>Count the corner letters. Odd means parity, even means none.</li>
-          <li>Run it once, after the last corner, before the first edge.</li>
-          <li>The edge count always matches, so never count both.</li>
-          <li>2x2: never. There are no edges to swap.</li>
+          <li>Count your corner letters. Odd means do the parity algorithm. Even means skip it.</li>
+          <li>Do it once, after the last corner, before the first edge.</li>
+          <li>2x2 never has parity.</li>
         </ul>
       </div>
     </div>
 
     <div class="tcard">
       <div class="tcard-demo static"><div id="tip-two"></div>
-        <p class="tcard-cap">Down, back, left. Stickers <b class="f-L">H</b>, <b class="f-B">S</b>,
+        <p class="tcard-cap">Down, back, left. Letters <b class="f-L">H</b>, <b class="f-B">S</b>,
           <b class="f-D">X</b>.</p></div>
       <div class="tcard-text">
         <h3>2x2: one corner never moves</h3>
         <ul>
-          <li>The down-back-left corner is the fixed reference. H, S and X are never targets.</li>
-          <li>If a solve ends with that corner wrong, you turned the whole cube during the solve.</li>
-          <li>Everything else is identical to 3x3 corners: same buffer, same algorithm, same setups.</li>
+          <li>This corner is your fixed point. You never shoot at it.</li>
+          <li>If a solve ends with it wrong, you turned the whole cube mid-solve.</li>
+          <li>Everything else works exactly like 3x3 corners.</li>
         </ul>
       </div>
     </div>
-
-    <p class="tips-foot">Before you start executing: open the Solution sheet, type your letters into
-      the memo check, and compare the count. One short is nearly always an underlined close.</p>
   </div>
 </div>
 
@@ -301,11 +311,11 @@
 <div class="toast" id="toast"></div>
 <input type="file" id="file-input" accept="application/json" class="off">
 
-<script src="assets/js/data-letters.js?v=5"></script>
-<script src="assets/js/cube.js?v=5"></script>
-<script src="assets/js/cube3d.js?v=5"></script>
-<script src="assets/js/app.js?v=5"></script>
-<script src="assets/js/path.js?v=5"></script>
-<script src="assets/js/tips.js?v=5"></script>
+<script src="assets/js/data-letters.js?v=6"></script>
+<script src="assets/js/cube.js?v=6"></script>
+<script src="assets/js/cube3d.js?v=6"></script>
+<script src="assets/js/app.js?v=6"></script>
+<script src="assets/js/path.js?v=6"></script>
+<script src="assets/js/tips.js?v=6"></script>
 </body>
 </html>
