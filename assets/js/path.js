@@ -376,7 +376,18 @@
   }
 
   /* ------------------------------------------------------------- wiring */
+  /* the first build of the quiz wrongly marked practice gates as passed. A gate
+     that was never actually earned (no count behind it) goes back to open. */
+  function repair() {
+    if (P.repaired) return;
+    ['twoBld', 'assisted', 'full'].forEach(function (id) {
+      if (P.done[id] && !((P.counts[id] || 0) >= stageById(id).need)) delete P.done[id];
+    });
+    P.repaired = true; persist();
+  }
+
   function init() {
+    repair();
     $('#quiz-go').addEventListener('click', function () { applyQuiz(answers); });
     $('#quiz-skip').addEventListener('click', function () {
       P = fresh(); P.started = true; persist(); render();
