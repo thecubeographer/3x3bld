@@ -84,8 +84,9 @@
       blurb: 'Turn letters into pictures you can chain.',
       need: 40, unit: 'pairs recalled',
       teach:
-        '<p>Nobody remembers <b>V P Q H J K</b>. They remember a viper biting a hippo. Letters go in ' +
-        'two at a time and come out as one image.</p>' +
+        '<p>Nobody remembers <b>V P H I D G</b>. They remember a viper biting a hippo that is sitting ' +
+        'on a dog. VP is the viper, HI is the hippo, DG is the dog. Letters go in two at a time and ' +
+        'come out as one image.</p>' +
         '<p>The word starts with the first letter and the second letter is the next sound you hear. ' +
         'VP is <b>ViPer</b>, DG is <b>DoG</b>. If the second letter is a vowel the word just starts ' +
         'with both, so BO is <b>BOot</b>.</p>' +
