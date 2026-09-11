@@ -24,6 +24,7 @@
     <button class="tab" data-tab="pairs">Pairs</button>
     <button class="tab" data-tab="notepad">Notes</button>
   </nav>
+  <button class="tip-btn" id="open-tips">Tips <kbd>T</kbd></button>
   <div class="seg tiny" id="puzzle-seg">
     <button class="seg-btn is-on" data-puzzle="333">3x3</button>
     <button class="seg-btn" data-puzzle="222">2x2</button>
@@ -202,6 +203,65 @@
     </div>
   </div>
 </main>
+
+
+<!-- ================================================================ TIPS -->
+<div class="sheet" id="tips" hidden>
+  <div class="sheet-in tips-in">
+    <button class="sheet-x" id="close-tips" aria-label="close">&times;</button>
+    <h2>Cycles, twists and parity</h2>
+    <p class="tips-lede">Nearly every solve that ends one piece wrong died at one of these four spots.</p>
+
+    <section>
+      <h3>1. The buffer coming home does not mean you are done</h3>
+      <p>You stop only when the sticker sitting in the buffer slot is the buffer's own letter
+        (<b class="f-U">A</b> for corners, <b class="f-U">B</b> for edges). If the sticker there is a
+        different letter of the same piece (E or R for corners, M for edges), the buffer is home but
+        twisted. Either way, look around the cube. Any piece still wrong means you break in.</p>
+    </section>
+
+    <section>
+      <h3>2. Breaking in costs one extra algorithm, and it is the last one</h3>
+      <p>Pick any wrong piece and shoot to one of its stickers. Call that letter X. Read the new
+        sticker in the buffer and keep going as normal. That chain ends when the buffer piece comes
+        back home, and the shot that brings it home is aimed at <b>the slot you broke into</b>. It
+        will be X or one of X's sibling letters. <b>Read it off the cube, do not assume it is X.</b>
+        The sibling tells you the twist.</p>
+      <p>So a break-in through three wrong pieces is four letters, not three. On the Solution sheet
+        every break-in is bracketed and its closing letter is marked, so you can count them before
+        you start.</p>
+    </section>
+
+    <section>
+      <h3>3. A corner in the right place but turned is two shots on the same piece</h3>
+      <p>Break in on one of its stickers, then the very next target is another sticker of that same
+        piece. Two letters, two algorithms, one corner. The Solution sheet labels these <i>twist</i>.
+        The same rule flips an edge that is in place but backwards.</p>
+    </section>
+
+    <section>
+      <h3>4. Parity is decided by one count</h3>
+      <p>Count your corner letters. Odd means parity: run the parity algorithm once after the last
+        corner and before the first edge. Even means skip it. That is the whole rule. The edge count
+        will always match, so you never need to count both.</p>
+    </section>
+
+    <section>
+      <h3>On the 2x2</h3>
+      <p>There are no edges, so there is never parity and an odd count is fine. The down back left
+        corner (letters <b class="f-L">H</b>, <b class="f-B">S</b>, <b class="f-D">X</b>) is your
+        fixed reference and is never a target. If a solve ends with that corner wrong, you turned the
+        cube during the solve. Everything else about cycles and twists is identical to the 3x3.</p>
+    </section>
+
+    <section>
+      <h3>Check yourself before you touch it</h3>
+      <p>Letters equal algorithms. Open the Solution sheet after you memorise, type your letters into
+        the memo check, and compare the count. If yours is short by one, the missing letter is almost
+        always the close of a break-in.</p>
+    </section>
+  </div>
+</div>
 
 <div class="celebrate" id="celebrate" hidden>
   <div class="cel-in">

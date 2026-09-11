@@ -105,9 +105,33 @@
     return tintMoves(setup) + ' <span class="sep">/</span> <span class="core">' + tintMoves(core) +
       '</span> <span class="sep">/</span> ' + tintMoves(Cube.invAlg(setup));
   }
-  function memoHTML(title, letters, flag) {
+  /* letters grouped by cycle: a bracket is a break-in, and its last letter is
+     the shot that sends the buffer back to the slot you broke into */
+  function cycleHTML(letters, cycles) {
+    if (!cycles || !cycles.length) return tint(letters.join(' '));
+    return cycles.map(function (c) {
+      var inner = letters.slice(c.from, c.to + 1).map(function (L, i, arr) {
+        var last = c.breakIn && i === arr.length - 1 && arr.length > 1;
+        return '<span class="' + (last ? 'close ' : '') + 'f-' + faceOf(L) + '">' + L + '</span>';
+      }).join(' ');
+      if (!c.breakIn) return '<span class="cyc">' + inner + '</span>';
+      return '<span class="cyc bi' + (c.twist ? ' tw' : '') + '"><i>' +
+        (c.twist ? 'twist' : 'break in') + '</i>' + inner + '</span>';
+    }).join('');
+  }
+  function cycleNote(cycles) {
+    if (!cycles) return '';
+    var bi = cycles.filter(function (c) { return c.breakIn && !c.twist; }).length;
+    var tw = cycles.filter(function (c) { return c.twist; }).length;
+    if (!bi && !tw) return '';
+    var bits = [];
+    if (bi) bits.push(bi + ' break-in' + (bi > 1 ? 's' : '') + ', each ends with a shot back to the slot you broke into');
+    if (tw) bits.push(tw + ' twist' + (tw > 1 ? 's' : '') + ' in place, two shots on the same piece');
+    return '<p class="memo-note">' + bits.join('. ') + '.</p>';
+  }
+  function memoHTML(title, letters, flag, cycles) {
     return '<h3>' + title + ' <span>' + letters.length + '</span>' + (flag || '') + '</h3>' +
-      '<div class="memo-letters">' + tint(letters.join(' ')) + '</div>' +
+      '<div class="memo-letters">' + cycleHTML(letters, cycles) + '</div>' + cycleNote(cycles) +
       '<div class="memo-pairs">' + pairsOf(letters.join('')).map(function (p) {
         return '<div class="mp" data-pair="' + p + '"><i>' + tint(p) + '</i><b>' +
           (p.length === 2 ? word(p) : '&middot;') + '</b></div>';
@@ -116,9 +140,9 @@
   function renderSolution() {
     if (!analysis) return;
     $('#memo-corners').innerHTML = memoHTML('corners', analysis.corners,
-      analysis.parity ? '<span class="par">parity</span>' : '');
+      analysis.parity ? '<span class="par">parity</span>' : '', analysis.cornerCycles);
     $('#memo-edges').innerHTML = analysis.edges.length
-      ? memoHTML('edges', analysis.edges) : '<h3>edges <span>0</span></h3>';
+      ? memoHTML('edges', analysis.edges, '', analysis.edgeCycles) : '<h3>edges <span>0</span></h3>';
     $('#alg-list').innerHTML =
       analysis.cornerAlgs.map(function (a) {
         return '<li><b class="f-' + faceOf(a.target) + '">' + a.target + '</b> ' +
@@ -154,7 +178,16 @@
   $('#check-c').addEventListener('input', checkMemo);
   $('#check-e').addEventListener('input', checkMemo);
 
-  function sheetOpen() { return !$('#solution').hasAttribute('hidden'); }
+  function tipsOpen() { return !$('#tips').hasAttribute('hidden'); }
+  function toggleTips(force) {
+    var open = force == null ? !tipsOpen() : force;
+    $('#tips').toggleAttribute('hidden', !open);
+  }
+  $('#open-tips').addEventListener('click', function () { toggleTips(); });
+  $('#close-tips').addEventListener('click', function () { toggleTips(false); });
+  $('#tips').addEventListener('mousedown', function (e) { if (e.target === this) toggleTips(false); });
+
+  function sheetOpen() { return !$('#solution').hasAttribute('hidden') || tipsOpen(); }
   function toggleSheet(force) {
     var open = force == null ? !sheetOpen() : force;
     $('#solution').toggleAttribute('hidden', !open);
@@ -195,7 +228,8 @@
   document.addEventListener('keydown', function (e) {
     var tag = (e.target.tagName || '').toLowerCase();
     if (tag === 'input' || tag === 'textarea') return;
-    if (e.key === 'Escape' && sheetOpen()) { toggleSheet(false); return; }
+    if (e.key === 'Escape' && sheetOpen()) { toggleSheet(false); toggleTips(false); return; }
+    if (e.code === 'KeyT' && !sheetOpen() && TS === 'idle') { toggleTips(); return; }
     if (!onTab('solve')) return;
     if (pending) {
       if (e.code === 'KeyY') settle(true);

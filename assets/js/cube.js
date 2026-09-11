@@ -190,11 +190,13 @@
   var cPiece = group(cornerOf), ePiece = group(edgeOf);
 
   function trace(state, homeMap, letterAt, perms, bufLetter) {
-    var bufPiece = (homeMap === cornerOf ? cPiece : ePiece)[bufLetter];
-    var st = state.slice(), targets = [], guard = 0;
+    var pieces = homeMap === cornerOf ? cPiece : ePiece;
+    var bufPiece = pieces[bufLetter];
+    var st = state.slice(), targets = [], cycles = [], cur = null, guard = 0;
     while (guard++ < 80) {
-      var t = letterAt[st[homeMap[bufLetter]]];
+      var t = letterAt[st[homeMap[bufLetter]]], breakIn = false;
       if (bufPiece.indexOf(t) >= 0) {              // buffer piece is home: new cycle
+        if (cur) { cur.to = targets.length - 1; cycles.push(cur); cur = null; }
         t = null;
         for (var i = 0; i < SPEFFZ.length; i++) {
           var L = SPEFFZ[i];
@@ -202,11 +204,19 @@
           if (st[homeMap[L]] !== homeMap[L]) { t = L; break; }
         }
         if (!t) break;
+        breakIn = true;
       }
+      if (!cur) cur = { from: targets.length, breakIn: breakIn };
       targets.push(t);
       st = applyPerm(st, perms[t]);
     }
-    return { targets: targets, state: st };
+    if (cur) { cur.to = targets.length - 1; cycles.push(cur); }
+    // a break-in whose letters all sit on one piece is a twist in place
+    cycles.forEach(function (c) {
+      var letters = targets.slice(c.from, c.to + 1);
+      c.twist = c.breakIn && letters.every(function (L) { return pieces[letters[0]].indexOf(L) >= 0; });
+    });
+    return { targets: targets, state: st, cycles: cycles };
   }
 
   function analyse(scramble) {
@@ -218,6 +228,7 @@
     var solved = e.state.every(function (v, i) { return v === i; });
     return {
       scramble: scramble, state: start, corners: c.targets, edges: e.targets,
+      cornerCycles: c.cycles, edgeCycles: e.cycles,
       parity: parity, solved: solved,
       cornerAlgs: c.targets.map(function (L) { return { target: L, setup: CORNER_SETUP[L], alg: cornerFull[L] }; }),
       edgeAlgs: e.targets.map(function (L) { return { target: L, setup: EDGE_SETUP[L], alg: edgeFull[L] }; })
@@ -230,7 +241,7 @@
     var solved = SPEFFZ.split('').every(function (L) { return c.state[cornerOf[L]] === cornerOf[L]; });
     return {
       scramble: scramble, state: start, corners: c.targets, edges: [], parity: false,
-      solved: solved,
+      cornerCycles: c.cycles, edgeCycles: [], solved: solved,
       cornerAlgs: c.targets.map(function (L) { return { target: L, setup: CORNER_SETUP[L], alg: cornerFull[L] }; }),
       edgeAlgs: []
     };
@@ -300,7 +311,7 @@
     nameOfC: nameOfC, nameOfE: nameOfE,
     analyse: analyse, analyse2x2: analyse2x2,
     facelets: facelets, cornerOf: cornerOf, edgeOf: edgeOf,
-    letterAtC: letterAtC, letterAtE: letterAtE,
+    letterAtC: letterAtC, letterAtE: letterAtE, cPiece: cPiece, ePiece: ePiece,
     stickerFace: function (state, i) { return facelets[state[i]].face; },
     scramble3: scramble3, scramble2: scramble2,
     netColors: netColors, letterGrid: letterGrid,

@@ -448,3 +448,28 @@ body.touch .tools{gap:8px}
   .notes-cols{display:block;overflow:auto}
   .notes-cols>div{overflow:visible}
 }
+
+/* ------------------------------------------------------- cycles and tips */
+.memo-letters .cyc{display:inline-block;margin:0 14px 8px 0;padding:2px 0}
+.memo-letters .cyc.bi{position:relative;padding:8px 12px 6px;background:var(--stage);
+  border-radius:var(--r);margin-top:14px}
+.memo-letters .cyc.bi i{position:absolute;top:-9px;left:10px;font-family:var(--sans);font-style:normal;
+  font-size:11px;font-weight:700;letter-spacing:0;background:var(--D);color:var(--ink);
+  padding:1px 7px;border-radius:3px}
+.memo-letters .cyc.tw i{background:var(--R);color:#fff}
+.memo-letters .close{text-decoration:underline;text-decoration-thickness:3px;
+  text-underline-offset:6px;text-decoration-color:var(--D)}
+.memo-note{font-family:var(--sans);font-size:13px;color:var(--dim);margin:4px 0 12px;
+  letter-spacing:0}
+.tip-btn{margin-left:auto;background:none;border:0;color:var(--dim);font-size:14px;font-weight:500;
+  cursor:pointer;padding:8px 10px}
+.tip-btn:hover{color:var(--fg)}
+.rail .tip-btn + .seg{margin-left:0}
+.tips-in{max-width:760px;font-size:15.5px;line-height:1.6}
+.tips-in h2{font-size:28px;font-weight:800;margin:0 0 6px}
+.tips-lede{color:var(--dim);margin:0 0 24px}
+.tips-in section{padding:16px 0;border-top:1px solid var(--hair)}
+.tips-in h3{font-size:17px;font-weight:700;margin:0 0 8px}
+.tips-in p{margin:0 0 10px;color:var(--dim)}
+.tips-in p b{color:var(--fg)} .tips-in p i{color:var(--fg);font-style:normal;font-weight:600}
+@media(max-width:600px){.tip-btn{padding:8px 6px;font-size:13px}.tips-in{font-size:15px}}
