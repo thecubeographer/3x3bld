@@ -14,7 +14,7 @@
    can be exported to JSON.
 */
 window.LETTER_ROWS = {
-  A: "Abba, Abs, Ace, Adam, Aeroplane, As F*ck, Agent, Ahab, AI, Ajax, AK-47, Alien, Amber, Anchor, Aorta, Ape, Aquarium, Arrow, Astronaut, Atom, Audi, Avocado, Awning, Axe",
+  A: "Abba, Abs, Ace, Adam, Aeroplane, As F*ck, Agent, Ahab, AI, Ajax, AK-47, Alien, Amber, Anchor, Aorta, Ape, Aquarium, Arrow, Astronaut, Atom, Audi, Aviators, Awning, Axe",
   B: "Bat, Baby, Bacon, Badge, Bed, Buffalo, Bagel, Beehive, Bison, BJ, Bike, Ball, BMW, Bone, Boot, Bell Pepper, BBQ, Bread, Bus, Boat, Bull, Beaver, Bow, Box",
   C: "Cat, Cab, Coconut, CD, Cello, Coffee, Cigar, Chair, Circus, Candy Jar, Cake, Clown, Camel, Cane, Cow, Cop, Croquet, Crown, Castle, Coat, Cup, Cave, Cowboy, Coax Cable",
   D: "Dart, Doberman, Dice, Dad, Deer, Daffodil, Dog, Doghouse, Dinosaur, DJ, Duck, Doll, Diamond, Donut, Door, Diaper, Dairy Queen, Dragon, Desk, Dump Truck, Dust, Dove, Dwarf, Duplex",
@@ -33,7 +33,7 @@ window.LETTER_ROWS = {
   Q: "Quack, Queen Bee, Quiche, Quad, Queen, Queen's Fan, Quagmire, Quahog, Quilt, Queen's Jewel, Quake, Quill, Queen Mary, Quinoa, Quokka, Queen's Pawn, Quiz Queen, QR Code, Quicksand, Quartz, Queue, Quiver, Queen's Wand, Quixote",
   R: "Rat, Rabbit, Racecar, Radio, Reef, Roof, Rug, Rhino, Ring, Rajah, Rocket, Rail, Ram, Rain, Robot, Rope, Racquet, Rolls-Royce, Rose, Rattlesnake, Ruby, RV, Rowboat, Rex",
   S: "Sand, Saber, Scarf, Saddle, Seal, Sofa, Sugar, Shark, Silver, Ski Jump, Skull, Salt, Smoke, Snake, Soap, Spider, Squid, Siren, Scissors, Stone, Sun, Shovel, Sword, Saxophone",
-  T: "Taco, Table, Toucan, Toad, Teeth, Tofu, Tiger, Thumb, Tissue, Taj Mahal, Tank, Toilet, Tomato, Tuna, Torch, Teapot, Turquoise, Truck, Toast, Tattoo, Tuba, TV, Towel, Tuxedo",
+  T: "Taco, Table, Toucan, Toad, Teeth, Tofu, Tiger, Thumb, Tissue, Taj Mahal, Tank, Toilet, Tomato, Tuna, Torch, Teapot, Taquito, Truck, Toast, Tattoo, Tuba, TV, Towel, Tuxedo",
   U: "UFO Antenna, Umbrella, Unicycle, Udder, Uber Eats, UFO, Ugg Boot, U-Haul, Uranium Ingot, Uncle Joe, Ukulele, Ultrasound, Umpire, Unicorn, USB Outlet, UPS Truck, Unicorn Queen, Urn, USB Stick, Utensil, Umbrella Urn, UV Lamp, Underwear, USB X-ray",
   V: "Vault, Violin Bow, Vacuum, Video Tape, Vest, Velvet Flag, Vegas Sign, Vehicle, Visor, Vinyl Jacket, Viking, Violin, Vampire, Vine, Volcano, Viper, Velvet Quilt, VR Headset, Vase, Vet, Vulture, Volvo, VW Beetle, Vortex",
   W: "Wagon, Web, Watch, Wood, Well, Waffle, Wig, Wheel, Window, Wine Jug, Wok, Wall, Worm, Wine, Wolf, Wasp, Witch Queen, Wire, Whistle, Water, Wurst, Wave, Wigwam, Wax",

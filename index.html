@@ -10,8 +10,8 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <title>BLD Trainer</title>
-<link rel="icon" href="assets/favicon.svg?v=6" type="image/svg+xml">
-<link rel="stylesheet" href="assets/css/app.css?v=6">
+<link rel="icon" href="assets/favicon.svg?v=7" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/app.css?v=7">
 </head>
 <body>
 
@@ -167,6 +167,12 @@
     <div class="grade" id="pair-grade" hidden>
       <button class="btn" data-g="1">Got it <kbd>1</kbd></button>
       <button class="btn" data-g="0">Missed <kbd>2</kbd></button>
+      <button class="btn" id="pair-edit">Change word</button>
+    </div>
+    <div class="pair-editor" id="pair-editor" hidden>
+      <input class="in" id="pair-edit-in" autocomplete="off" spellcheck="false">
+      <button class="btn primary" id="pair-edit-save">Save</button>
+      <button class="btn" id="pair-edit-cancel">Cancel</button>
     </div>
     <div class="keys" id="pair-keys"><kbd>space</kbd> or click to show</div>
   </div>
@@ -311,11 +317,11 @@
 <div class="toast" id="toast"></div>
 <input type="file" id="file-input" accept="application/json" class="off">
 
-<script src="assets/js/data-letters.js?v=6"></script>
-<script src="assets/js/cube.js?v=6"></script>
-<script src="assets/js/cube3d.js?v=6"></script>
-<script src="assets/js/app.js?v=6"></script>
-<script src="assets/js/path.js?v=6"></script>
-<script src="assets/js/tips.js?v=6"></script>
+<script src="assets/js/data-letters.js?v=7"></script>
+<script src="assets/js/cube.js?v=7"></script>
+<script src="assets/js/cube3d.js?v=7"></script>
+<script src="assets/js/app.js?v=7"></script>
+<script src="assets/js/path.js?v=7"></script>
+<script src="assets/js/tips.js?v=7"></script>
 </body>
 </html>

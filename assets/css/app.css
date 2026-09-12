@@ -523,3 +523,6 @@ body.touch .tools{gap:8px}
 #tips.three .tcard .tip-cube{min-height:250px}
 .tip-cube{width:190px;min-height:230px;display:flex;align-items:center;justify-content:center}
 #tips.three .tcard .tip-cube{min-height:250px}
+.pair-editor{display:flex;gap:8px;align-items:center;justify-content:center;margin-top:14px;
+  flex-wrap:wrap;animation:rise .18s ease}
+.pair-editor .in{font-family:var(--sans);font-size:18px;min-width:220px;text-align:center;letter-spacing:0}

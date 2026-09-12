@@ -422,6 +422,7 @@
     pd.shown = false; pd.t = Date.now();
     $('#pair-answer').setAttribute('hidden', '');
     $('#pair-grade').setAttribute('hidden', '');
+    $('#pair-editor').setAttribute('hidden', '');
     $('#pair-keys').removeAttribute('hidden');
     if (pd.mode === 'p2w') {
       $('#pair-prompt').className = 'prompt';
@@ -475,9 +476,37 @@
     pairStats = {}; store.set('pairstats', {}); renderPairStats(); toast('wiped');
   });
 
+  /* change the current pair's word without leaving the drill; it saves to the
+     same place the Letters grid reads from */
+  function openPairEditor() {
+    if (!pd.cur) return;
+    showPair();
+    $('#pair-editor').removeAttribute('hidden');
+    var inp = $('#pair-edit-in'); inp.value = word(pd.cur); inp.focus(); inp.select();
+  }
+  function closePairEditor(save) {
+    var inp = $('#pair-edit-in'), v = inp.value.trim();
+    if (save && v && pd.cur) {
+      if (v === window.PAIRS[pd.cur]) delete overrides[pd.cur]; else overrides[pd.cur] = v;
+      store.set('letters', overrides); renderGrid();
+      if (pd.mode === 'p2w') $('#pair-answer').textContent = v; else $('#pair-prompt').textContent = v;
+      toast(pd.cur + ' = ' + v);
+    }
+    $('#pair-editor').setAttribute('hidden', '');
+  }
+  $('#pair-edit').addEventListener('click', openPairEditor);
+  $('#pair-edit-save').addEventListener('click', function () { closePairEditor(true); });
+  $('#pair-edit-cancel').addEventListener('click', function () { closePairEditor(false); });
+  $('#pair-edit-in').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') { e.preventDefault(); closePairEditor(true); }
+    if (e.key === 'Escape') { e.preventDefault(); closePairEditor(false); }
+    e.stopPropagation();
+  });
+
   /* pairs drill: the stage reveals on click, the buttons grade, and on a keyboard
      space reveals, 1 is got it, 2 is missed */
   $('#page-pairs .stage').addEventListener('click', function (e) {
+    if (e.target.closest('#pair-editor') || e.target.closest('#pair-edit')) return;
     var g = e.target.closest('[data-g]');
     if (g) { gradePair(g.dataset.g === '1'); return; }
     showPair();
