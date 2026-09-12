@@ -32,9 +32,10 @@
     return n;
   }
 
+  var N = 2;                                // which puzzle the examples are drawn on
   function findExample(test) {
     for (var i = 0; i < 5000; i++) {
-      var a = Cube.analyse2x2(Cube.scramble2(11));
+      var a = N === 2 ? Cube.analyse2x2(Cube.scramble2(11)) : Cube.analyse(Cube.scramble3(22));
       if (test(a)) return a;
     }
     return null;
@@ -76,7 +77,7 @@
         '<div class="tip-ctl"><button class="btn" data-act="reset">Start over</button>' +
         '<button class="btn primary" data-act="next">Next shot</button></div>' +
       '</div>';
-    var cube = Cube3D.create($('.tip-cube', host), { n: 2, size: 190, tilt: [-24, -38] });
+    var cube = Cube3D.create($('.tip-cube', host), { n: N, size: N === 3 ? 140 : 180, tilt: [-24, -38] });
     var k = 0, busy = false, call = $('.tip-call', host);
     function cycleOf(i) {
       for (var c = 0; c < a.cornerCycles.length; c++) {
@@ -143,7 +144,7 @@
         '<div class="count-row total"><span>letters you must have</span><b>' + (W + B) + '</b></div>' +
         '<div class="tip-letters small">' + bracketHTML(a) + '</div>' +
       '</div>';
-    var cube = Cube3D.create($('.tip-cube', host), { n: 2, size: 190, tilt: [-24, -38] });
+    var cube = Cube3D.create($('.tip-cube', host), { n: N, size: N === 3 ? 140 : 180, tilt: [-24, -38] });
     cube.setState(a.state);
     var keep = [];
     L.split('').forEach(function (l) {
@@ -154,12 +155,18 @@
     cube.focus(keep);
   }
 
-  var built = false;
-  function build() {
-    if (built) return; built = true;
+  /* examples are rebuilt whenever the puzzle switches, so 3x3 mode shows
+     3x3 cubes; the fixed-corner card only makes sense on a 2x2 */
+  var builtFor = 0;
+  function build(n) {
+    n = n === 3 ? 3 : 2;
+    if (builtFor === n) return;
+    builtFor = n; N = n;
+    $('#tips').classList.toggle('three', n === 3);
     var bi = findExample(EX.breakin), tw = findExample(EX.twist);
     if (bi) { stepper($('#tip-breakin'), bi); countCard($('#tip-count'), bi); }
     if (tw) stepper($('#tip-twist'), tw);
+    $('#tip-two').innerHTML = '';
     var two = Cube3D.create($('#tip-two'), { n: 2, size: 190, tilt: [28, 40] });
     two.focus(pieceIdx('H'));
     $('#tip-parity-alg').innerHTML = window.tintMoves(Cube.PARITY_ALG);

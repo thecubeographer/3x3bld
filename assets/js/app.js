@@ -50,14 +50,23 @@
   function pairsOf(s) { var o = []; for (var i = 0; i < s.length; i += 2) o.push(s.substr(i, 2)); return o; }
 
   /* ------------------------------------------------------------------ tabs */
+  /* the open tab is kept in the URL hash and in storage, so a reload lands
+     you back where you were instead of on Learn */
   $$('#tabs .tab').forEach(function (b) {
     b.addEventListener('click', function () {
       $$('#tabs .tab').forEach(function (x) { x.classList.remove('is-on'); });
       $$('.screen').forEach(function (p) { p.classList.remove('is-on'); });
       b.classList.add('is-on');
       $('#page-' + b.dataset.tab).classList.add('is-on');
+      store.set('tab', b.dataset.tab);
+      if (history.replaceState) history.replaceState(null, '', '#' + b.dataset.tab);
     });
   });
+  function restoreTab() {
+    var want = (location.hash || '').slice(1) || store.get('tab', 'learn');
+    var b = $('#tabs .tab[data-tab="' + want + '"]');
+    if (b && !b.classList.contains('is-on')) b.click();
+  }
   function onTab(id) { return $('#page-' + id).classList.contains('is-on'); }
 
   /* ------------------------------------------------------------------- net */
@@ -185,7 +194,7 @@
   function toggleTips(force) {
     var open = force == null ? !tipsOpen() : force;
     $('#tips').toggleAttribute('hidden', !open);
-    if (open && window.Tips) Tips.build();
+    if (open && window.Tips) Tips.build(puzzle === '222' ? 2 : 3);
   }
   $('#open-tips').addEventListener('click', function () { toggleTips(); });
   $('#close-tips').addEventListener('click', function () { toggleTips(false); });
@@ -671,4 +680,5 @@
   renderStory('c'); renderStory('e'); renderNoteScramble(); applyMode();
   nextPair();
   newScramble();
+  restoreTab();
 })();

@@ -519,3 +519,7 @@ body.touch .tools{gap:8px}
 .tip-letters.small{font-size:16px;margin-top:12px}
 @media(max-width:860px){.gloss{grid-template-columns:1fr}}
 .net.two .face{grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(2,1fr)}
+#tips.three .tcard.two-only{display:none}
+#tips.three .tcard .tip-cube{min-height:250px}
+.tip-cube{width:190px;min-height:230px;display:flex;align-items:center;justify-content:center}
+#tips.three .tcard .tip-cube{min-height:250px}
