@@ -466,6 +466,21 @@
     pairStats = {}; store.set('pairstats', {}); renderPairStats(); toast('wiped');
   });
 
+  /* pairs drill: the stage reveals on click, the buttons grade, and on a keyboard
+     space reveals, 1 is got it, 2 is missed */
+  $('#page-pairs .stage').addEventListener('click', function (e) {
+    var g = e.target.closest('[data-g]');
+    if (g) { gradePair(g.dataset.g === '1'); return; }
+    showPair();
+  });
+  document.addEventListener('keydown', function (e) {
+    var tag = (e.target.tagName || '').toLowerCase();
+    if (tag === 'input' || tag === 'textarea' || !onTab('pairs') || sheetOpen()) return;
+    if (e.code === 'Space') { e.preventDefault(); showPair(); }
+    else if (e.key === '1') { showPair(); gradePair(true); }
+    else if (e.key === '2') { showPair(); gradePair(false); }
+  });
+
   /* ----------------------------------------------------------------- notes */
   var notes = store.get('notes', { c: '', e: '', lines: {} });
   function clean(s) { return (s || '').toUpperCase().replace(/[^A-X]/g, ''); }
